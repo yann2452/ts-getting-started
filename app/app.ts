@@ -1,47 +1,20 @@
-function startGame() {
-    // starting game
-    let playerName: string | undefined = getInputValue('playername');
-    logPlayer(playerName);
+import { Game } from "./game";
+import { Player } from "./player";
+import * as Helpers from "./utility";
 
-    postScores(80, playerName);
-    postScores(-5, playerName);
-}
+let newGame: Game;
 
-function logPlayer(name: string = 'MultiMath Player'): void {
-    console.log(`New game starting for player: ${name}`);
-}
+document.getElementById('startGame')!.addEventListener('click', () => {
+    const player: Player = new Player();
+    player.name = Helpers.getValue('playername');
 
-function getInputValue(elementId: string): string | undefined {
-    const inputElement: HTMLInputElement = <HTMLInputElement>document.getElementById(elementId);
-    if (inputElement.value === '') {
-        return undefined;
-    }
-    else {
-        return inputElement.value;
-    }
-}
+    const problemCount: number = Number(Helpers.getValue('problemCount'));
+    const factor: number = Number(Helpers.getValue('factor'));
 
-function postScores(score: number, playerName: string = 'MultiMath Player'): void {
+    newGame = new Game(player, problemCount, factor);
+    newGame.displayGame();
+});
 
-    let logger: (value: string) => void;
-
-    if (score < 0) {
-        logger = logError;
-    }
-    else {
-        logger = logMessage;
-    }
-
-    const scoreElement: HTMLElement = <HTMLElement>document.querySelector('#postedScores');
-    scoreElement.innerHTML = `${score} - ${playerName}`;
-
-    logger(`Score: ${score}`);
-}
-
-document.getElementById('startGame')!.addEventListener('click', startGame);
-
-const logMessage = (message: string) => console.log(message);
-
-function logError(err: string): void {
-    console.log(err);
-}
+document.getElementById('calculate')!.addEventListener('click', () => {
+    newGame.calculateScore();
+})
